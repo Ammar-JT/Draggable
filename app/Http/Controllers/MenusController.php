@@ -81,4 +81,10 @@ class MenusController extends Controller
     {
         //
     }
+
+    public function reorder(Request $request){
+        $input = $request->all();
+        return response()->json(['success'=>'Got Simple Ajax Request.',
+                                'input' => $input]);
+    }
 }

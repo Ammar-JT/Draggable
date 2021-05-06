@@ -21,3 +21,6 @@ Route::get('/', [Controllers\PagesController::class, 'index'])->name('pages.inde
 Route::resource('menus', Controllers\MenusController::class);
 Route::resource('languages', Controllers\LanguagesController::class);
 
+Route::post('/menus/reorder', [Controllers\MenusController::class, 'reorder'])->name('menus.reorder');
+Route::post('/languages/reorder', [Controllers\LanguagesController::class, 'reorder'])->name('languages.reorder');
+
