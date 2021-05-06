@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
+use App\Models\Language;
 
 class MenusController extends Controller
 {
@@ -83,8 +86,25 @@ class MenusController extends Controller
     }
 
     public function reorder(Request $request){
-        $input = $request->all();
-        return response()->json(['success'=>'Got Simple Ajax Request.',
-                                'input' => $input]);
+        $request->validate([
+            'ids'         => 'required|array',
+            'ids.*'       => 'integer',
+            'language_id' => 'required|integer|exists:languages,id',
+        ]);
+
+        foreach ($request->ids as $index => $id) {
+            DB::table('menus')
+                ->where('id', $id)
+                ->update([
+                    'position' => $index + 1,
+                    'language_id' => $request->language_id
+                ]);
+        }
+
+        $positions = Language::find($request->language_id)
+            ->menus()
+            ->pluck('position', 'id');
+
+        return response(compact('positions'), Response::HTTP_OK);
     }
 }

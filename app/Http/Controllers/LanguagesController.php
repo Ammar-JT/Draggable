@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class LanguagesController extends Controller
 {
@@ -83,8 +85,19 @@ class LanguagesController extends Controller
     }
 
     public function reorder(Request $request){
-        $input = $request->all();
-        return response()->json(['success'=>'Got Simple Ajax Request.',
-                                'input' => $input]);
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        foreach ($request->ids as $index => $id) {
+            DB::table('languages')
+                ->where('id', $id)
+                ->update([
+                    'position' => $index + 1
+                ]);
+        }
+
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }

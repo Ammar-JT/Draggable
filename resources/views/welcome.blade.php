@@ -65,7 +65,7 @@
                                 <td class="language-name">
                                     {{ $menu->language->name ?? '' }}
                                 </td>
-                                <td>
+                                <td class="position">
                                     {{ $menu->position ?? '' }}
                                 </td>
 
@@ -110,15 +110,10 @@
                         language_id: $language.data('id')
                     },
                     success:function(response){
-                        console.log('ids sort of the menus list: ' + response.input.ids);
-                        console.log('language id of these menus list: ' + response.input.language_id);
-
-
-                        /*
                         $language.children('tr.menu').each(function (index, menu) {
                             $(menu).children('.position').text(response.positions[$(menu).data('id')])
                         });
-                        */
+                        
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) { 
                         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -175,7 +170,7 @@
                     }
                 });
 
-                //obviously he sort the menus, by sending the new languages list order to the controller
+                //obviously it sort the menus, by sending the new language that contains list of menus to the controller
                 $menus.sortable({
                     connectWith: '.sortable', //table body, so it's like the parent for it
                     items: 'tr.menu', //the table rows or items, it has the class menu
@@ -197,12 +192,16 @@
 
                         //element.parent(): will give you the upper element,
                         //.. in this case it's the language (one language not the whole body, so it's the tbody):
-                        //// if the element dragged to another language this if will be true:
+                        ////this will send the new menus list order to the controller
                         sendReorderMenusRequest($(ui.item).parent());
 
                         //event.target will give you the element that been handled when the event happend
                         //.. so if the event is click then the target is the element you clicked on
+                        //.. In our case if you dragged the menu to another language then event.target will be the old language
+                        //.. which is the language that the event happend inside it
+
                         //// if the element dragged to another language this 'if' will be true:
+                        ////.. event.target is the first language list && $(ui.item).parrent() is the other language list
                         if ($(event.target).data('id') != $(ui.item).parent().data('id')) {
                             if ($(event.target).find('tr.menu').length) {
                                 sendReorderMenusRequest($(event.target));
